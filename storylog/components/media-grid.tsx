@@ -1,5 +1,5 @@
 import { MediaCard } from "./media-card"
-import type { Media } from "@/types/media"
+import type { Media } from "@/domain/media"
 
 interface MediaGridProps {
   media: Media[]

@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
+import type { Media } from "@/domain/media"
 import { RiStarFill, RiStarLine } from "@remixicon/react"
-import type { Media } from "@/types/media"
 
 interface MediaCardProps {
   media: Media

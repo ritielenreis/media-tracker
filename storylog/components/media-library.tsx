@@ -2,20 +2,33 @@
 
 import * as React from "react"
 import { Button } from "@/components/ui/button"
+import type { Media } from "@/domain/media"
 import { AddMediaSheet } from "./add-media-sheet"
 import { EmptyLibraryState } from "./empty-library-state"
 import { MediaGrid } from "./media-grid"
-import type { Media } from "@/types/media"
 
-export function MediaLibrary() {
-  const [media, setMedia] = React.useState<Media[]>([])
+interface MediaLibraryProps {
+  initialMedia: Media[]
+}
+
+export function MediaLibrary({ initialMedia }: MediaLibraryProps) {
+  const [media, setMedia] = React.useState<Media[]>(initialMedia)
   const [isSheetOpen, setIsSheetOpen] = React.useState(false)
 
-  const handleAddMedia = (newMedia: Omit<Media, "id">) => {
-    const mediaWithId: Media = {
-      ...newMedia,
-      id: `media-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+  const handleAddMedia = async (newMedia: Omit<Media, "id">) => {
+    const response = await fetch("/api/media", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newMedia),
+    })
+
+    if (!response.ok) {
+      throw new Error("Failed to create media entry")
     }
+
+    const mediaWithId = (await response.json()) as Media
     setMedia((prev) => [mediaWithId, ...prev])
   }
 

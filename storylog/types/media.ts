@@ -1,9 +1,8 @@
-export type MediaType = "movie" | "series" | "book" | "game"
+export type {
+  Media,
+  MediaDraft,
+  MediaType,
+  MediaValidationErrors,
+} from "@/domain/media"
 
-export interface Media {
-  id: string
-  title: string
-  type: MediaType
-  thoughts?: string
-  rating?: number
-}
+export { mediaTypes, validateMediaDraft } from "@/domain/media"
