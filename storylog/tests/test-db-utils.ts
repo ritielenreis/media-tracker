@@ -1,30 +1,21 @@
 import { Pool, PoolClient } from 'pg'
 
-const TEST_DB_NAME = 'storylog_test'
-const TEST_DB_URL = `postgresql://deck@/tmp/${TEST_DB_NAME}`
+// Load test environment
+const TEST_DB_URL = process.env.TEST_DATABASE_URL || 'postgresql:///storylog_test?host=/tmp'
 
 let testPool: Pool | null = null
 
 export async function setupTestDatabase(): Promise<void> {
-  // Connect to default postgres database to create test database
-  const adminPool = new Pool({
-    host: '/tmp',
-    user: 'deck',
-    database: 'postgres',
-  })
-
+  // Test database should already be created by setup-test-db.mjs
+  // This ensures the pool can connect to it
+  const pool = await getTestDatabase()
+  
+  // Test connection
+  const client = await pool.connect()
   try {
-    // Check if test database exists
-    const result = await adminPool.query(
-      `SELECT datname FROM pg_database WHERE datname = $1`,
-      [TEST_DB_NAME]
-    )
-
-    if (result.rows.length === 0) {
-      await adminPool.query(`CREATE DATABASE ${TEST_DB_NAME}`)
-    }
+    await client.query('SELECT 1')
   } finally {
-    await adminPool.end()
+    client.release()
   }
 }
 
@@ -65,9 +56,7 @@ export async function truncateTestDatabase(): Promise<void> {
   const client = await pool.connect()
 
   try {
-    await client.query('TRUNCATE user_media CASCADE')
-    await client.query('TRUNCATE media CASCADE')
-    await client.query('TRUNCATE users CASCADE')
+    await client.query('TRUNCATE user_media, media, users CASCADE')
   } finally {
     client.release()
   }

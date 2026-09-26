@@ -9,11 +9,16 @@
     "start": "next start",
     "db:migrate": "node infrastructure/persistence/migrate.mjs",
     "db:check": "node infrastructure/persistence/check.mjs",
+    "db:test:setup": "node infrastructure/persistence/setup-test-db.mjs",
     "lint": "eslint",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "npm run db:test:setup && vitest run tests/integration --maxWorkers=1",
     "test": "playwright test",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "test:e2e:setup": "playwright install chromium",
+    "test:e2e:one": "playwright test --project=chromium"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -36,7 +41,7 @@
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@testing-library/user-event": "^14.6.7",
-    "@types/node": "^20",
+    "@types/node": "^22",
     "@types/pg": "^8.15.5",
     "@types/react": "^19",
     "@types/react-dom": "^19",
